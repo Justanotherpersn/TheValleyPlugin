@@ -108,7 +108,7 @@ public class DataHandler {
         String playername = player.getName();
         String targetplayer = target.getName();
 
-        if(getVoteStatus()){
+        if(!getVoteStatus()){
             return;
         }
 

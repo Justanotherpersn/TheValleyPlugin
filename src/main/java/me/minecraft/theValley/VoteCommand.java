@@ -31,6 +31,10 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
 
                 OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
 
+                if (!plugin.getdataHandler().getVoteStatus()){
+                    sender.sendMessage("Voting is not enabled");
+                    return true;
+                }
 
                 if (args.length != 1) {
                     sender.sendMessage("§cUsage: /addlife <player> <# of lives>");
@@ -59,12 +63,13 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
 
             case "startvoting":
                 plugin.getdataHandler().voteControl(true);
-                sender.sendMessage("Voting Stopped");
+                sender.sendMessage("Voting Started");
                 return true;
 
             case "stopvoting":
                 plugin.getdataHandler().voteControl(false);
-                sender.sendMessage("Voting Started");
+                sender.sendMessage("Voting Stopped");
+                return true;
         }
         return true;
     }
@@ -77,6 +82,7 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
 
             return allPlayerNames.stream()
                     .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .filter(name -> !name.equals("server"))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

@@ -78,6 +78,7 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
             return Arrays.stream(Bukkit.getOfflinePlayers())
                     .map(OfflinePlayer::getName)
                     .filter(Objects::nonNull)
+                    .filter(name -> !name.equals("server"))
                     .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
         }
