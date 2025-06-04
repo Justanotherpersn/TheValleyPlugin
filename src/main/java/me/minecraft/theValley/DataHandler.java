@@ -40,6 +40,14 @@ public class DataHandler {
 
     //region Data Manager
 
+    public void serverVoteInit(){
+        String server = "server";
+        if(!config.contains(server)) {
+            config.set(server + ".voteStatus", false);
+            save();
+        }
+    }
+
     public void init(Player player) {
         String playerName = player.getName();
         if (!config.contains(playerName)) {
@@ -86,9 +94,23 @@ public class DataHandler {
 
     //region Vote Handler
 
+    public void voteControl(boolean input){
+        config.set("server" + ".voteStatus", input);
+        save();
+    }
+
+    public boolean getVoteStatus(){
+        boolean status = config.getBoolean("server" + ".voteStatus");
+        return status;
+    }
+
     public void addVote(Player player, OfflinePlayer target){
         String playername = player.getName();
         String targetplayer = target.getName();
+
+        if(getVoteStatus()){
+            return;
+        }
 
         if(Objects.requireNonNull(config.getString(playername + ".votePointer", "")).isEmpty()){
             int votes = config.getInt(targetplayer + ".votes", 0) + 1;

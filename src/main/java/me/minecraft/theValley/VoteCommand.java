@@ -56,6 +56,15 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
             case "myvote":
                 sender.sendMessage("Your Vote is: " + plugin.getdataHandler().getVote(player));
                 return true;
+
+            case "startvoting":
+                plugin.getdataHandler().voteControl(true);
+                sender.sendMessage("Voting Stopped");
+                return true;
+
+            case "stopvoting":
+                plugin.getdataHandler().voteControl(false);
+                sender.sendMessage("Voting Started");
         }
         return true;
     }
