@@ -50,7 +50,7 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
                 return true;
 
             case "votelist":
-                sender.sendMessage("hey");
+                plugin.getdataHandler().listVotes(sender);
                 return true;
 
             case "myvote":

@@ -1,6 +1,8 @@
 package me.minecraft.theValley;
 
+import org.apache.logging.log4j.util.StringBuilders;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -8,7 +10,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataHandler {
     public File file;
@@ -96,6 +99,11 @@ public class DataHandler {
         }
 
         String oldVoteName = config.getString(playername + ".votePointer");
+
+        if (targetplayer.equals(oldVoteName)) {
+            return; // already voted for this player, do nothing
+        }
+
         int oldVoteNum = config.getInt(oldVoteName + ".votes") - 1;
         int newVoteNum = config.getInt(targetplayer + ".votes", 0) + 1;
 
@@ -118,7 +126,35 @@ public class DataHandler {
         return myvote;
     }
 
+    public void listVotes(CommandSender sender) {
+        Map<String, Integer> playerVotes = new HashMap<>();
+        Set<String> allPlayerNames = getConfig().getKeys(false);
 
+        for (String name : allPlayerNames) {
+            int votes = getConfig().getInt(name + ".votes", 0);
+            if (votes > 0) {
+                playerVotes.put(name, votes);
+            }
+        }
+
+        LinkedHashMap<String, Integer> sortedVotes = playerVotes.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        sender.sendMessage(" |------------------| ");
+        for (Map.Entry<String, Integer> entry : sortedVotes.entrySet()) {
+            sender.sendMessage(" - " + entry.getKey() + ": " + entry.getValue());
+        }
+        sender.sendMessage(" |------------------| ");
+
+
+    }
     //endregion
 
 

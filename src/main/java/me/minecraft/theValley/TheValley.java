@@ -8,6 +8,7 @@ public final class TheValley extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        //dataHandler.save();
         // Plugin startup logic
         this.dataHandler = new DataHandler(this);
         this.nametagSetter = new NametagSetter(this);
