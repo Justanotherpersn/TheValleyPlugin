@@ -1,6 +1,7 @@
 package me.minecraft.theValley;
 
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -16,7 +17,12 @@ public class NametagSetter {
 
 
 
-    String[] teamNames = { "RED", "DARK_PURPLE", "BLUE", "GREEN"};
+    String[] teamNames = { "f0 Life", "e1 Life", "d2 Life", "c3 Life", "b4 Life", "a5 Life" };
+    //String[] teamColor = { "RED", "DARK_PURPLE", "BLUE", "GREEN", "GREEN", "GREEN"};
+    ChatColor[] teamcolors = { ChatColor.RED, ChatColor.DARK_PURPLE, ChatColor.BLUE, ChatColor.GREEN, ChatColor.DARK_GREEN, ChatColor.DARK_GREEN};
+    String[] teamPrefix = {"", "", "", "", "[+] ", "[++] "};
+
+
 
     public void createColorTeams(){
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
@@ -25,19 +31,21 @@ public class NametagSetter {
 
             if(team == null){
                 team = scoreboard.registerNewTeam(teamNames[i]);
-                team.setColor(ChatColor.valueOf(teamNames[i].toUpperCase()));
+                team.setColor(ChatColor.valueOf(teamcolors[i].toString()));
+                team.setPrefix(ChatColor.WHITE + teamPrefix[i]);
             }
         }
     }
 
     public void setNametagColor(Player player, int lives){
-        int index = Math.min(3, Math.max(0, lives));
+        int index = Math.max(0, Math.min(lives, 5));
         Scoreboard scoreboard = Bukkit.getScoreboardManager().getMainScoreboard();
         Team team = scoreboard.getTeam(teamNames[index]);
         for (Team t : scoreboard.getTeams()) {
             t.removeEntry(player.getName());
         }
         team.addEntry(player.getName());
+        player.setPlayerListName(ChatColor.WHITE.toString() + teamPrefix[index] + teamcolors[index].toString() + player.getName());
         player.setScoreboard(scoreboard);
     }
 
