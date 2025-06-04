@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="the-valley:jar">
+    <output-path>$USER_HOME$/Desktop/Valley Server Testing/plugins</output-path>
+    <root id="archive" name="the-vally.jar">
+      <element id="module-output" name="the-valley" />
+    </root>
+  </artifact>
+</component>

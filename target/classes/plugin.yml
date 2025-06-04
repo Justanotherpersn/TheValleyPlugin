@@ -1,0 +1,45 @@
+name: TheValley
+version: '1.0'
+main: me.minecraft.theValley.TheValley
+api-version: '1.21'
+
+commands:
+  editlives:
+    description: adds a life to player target
+    usage: /editlives
+    permission: thevalley.editlives
+    permission-message: You don't have permission to use this command
+
+  removelife:
+    description: adds a life to player target
+    usage: /removelife
+    permission: thevalley.votePublic
+    permission-message: You don't have permission to use this command
+
+  vote:
+    description: casts a vote for valley mayor
+    usage: /vote
+    permission: thevalley.votePublic
+    permission-message: You don't have permission to use this command
+
+  votelist:
+    description: lists all votes
+    usage: /votelist
+    permission: thevalley.votePublic
+    permission-message: You don't have permission to use this command
+
+  myvote:
+    description: lists all votes
+    usage: /myvote
+    permission: thevalley.votePublic
+    permission-message: You don't have permission to use this command
+
+permissions:
+  thevalley.editlives:
+    description: Allows setting a player's lives directly
+    default: op
+
+  thevalley.votePublic:
+    description: Allows running vote commands for player
+    default: true
+
