@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class VoteCommand implements CommandExecutor, TabCompleter {
-    private static final Logger log = LoggerFactory.getLogger(VoteCommand.class);
     private final TheValley plugin;
 
     public VoteCommand(TheValley plugin){
@@ -29,6 +28,11 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
         switch (command.getName().toLowerCase()) {
             case "vote":
 
+                if (args.length != 1) {
+                    sender.sendMessage("§cUsage: /vote <player>");
+                    return true;
+                }
+
                 OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
 
                 if (!plugin.getdataHandler().getVoteStatus()){
@@ -36,17 +40,14 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                if (args.length != 1) {
-                    sender.sendMessage("§cUsage: /addlife <player> <# of lives>");
-                    return true;
-                }
-
                 if (target == null) {
                     sender.sendMessage("Player not found.");
+                    return true;
                 }
 
                 if (!plugin.getdataHandler().checkEligible(player)) {
                     sender.sendMessage("You're not eligible to vote.");
+                    return true;
                 }
 
                 plugin.getdataHandler().addVote(player, target);
@@ -69,6 +70,11 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
             case "stopvoting":
                 plugin.getdataHandler().voteControl(false);
                 sender.sendMessage("Voting Stopped");
+                return true;
+
+            case  "resetvoting":
+                plugin.getdataHandler().voteReset();
+                sender.sendMessage("Votes reset");
                 return true;
         }
         return true;

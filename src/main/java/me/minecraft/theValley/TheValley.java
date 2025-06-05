@@ -22,6 +22,7 @@ public final class TheValley extends JavaPlugin {
         getCommand("myvote").setExecutor(new VoteCommand(this));
         getCommand("startvoting").setExecutor(new VoteCommand(this));
         getCommand("stopvoting").setExecutor(new VoteCommand(this));
+        getCommand("resetvoting").setExecutor(new VoteCommand(this));
 
 
         LifeCommands lifeCommands = new LifeCommands(this);

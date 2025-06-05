@@ -46,6 +46,13 @@ commands:
     permission: thevalley.votePrivate
     permission-message: You don't have permission to use this command
 
+  resetvoting:
+    description: resets all votes
+    usage: /resetvoting
+    permission: thevalley.votePrivate
+    permission-message: You don't have permission to use this command
+
+
 permissions:
   thevalley.votePrivate:
     description: Allows setting a player's lives directly

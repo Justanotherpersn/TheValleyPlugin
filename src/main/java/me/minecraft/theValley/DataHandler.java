@@ -78,7 +78,7 @@ public class DataHandler {
 
     //region Life Handler
 
-    public void addLife(Player player, int targetLives) {
+    public void addLife(OfflinePlayer player, int targetLives) {
         String playerName = player.getName();
         int lives = config.getInt(playerName + ".lives", 0) + targetLives;
         int newlives = Math.max(0, Math.min(lives, 5));
@@ -96,6 +96,17 @@ public class DataHandler {
 
     public void voteControl(boolean input){
         config.set("server" + ".voteStatus", input);
+        save();
+    }
+
+    public void voteReset(){
+        Set<String> keys = config.getKeys(false);
+        for (String key : keys){
+            if (config.contains(key + ".votes")){
+                config.set(key + ".votes", 0);
+                config.set(key + ".votePointer", "");
+            }
+        }
         save();
     }
 
@@ -126,7 +137,7 @@ public class DataHandler {
             return; // already voted for this player, do nothing
         }
 
-        int oldVoteNum = config.getInt(oldVoteName + ".votes") - 1;
+        int oldVoteNum = Math.max(0 ,config.getInt(oldVoteName + ".votes") - 1);
         int newVoteNum = config.getInt(targetplayer + ".votes", 0) + 1;
 
         config.set(oldVoteName + ".votes", oldVoteNum);
@@ -137,10 +148,7 @@ public class DataHandler {
 
     public boolean checkEligible(Player player){
         String playername = player.getName();
-        if(config.getInt(playername + ".lives") > 0){
-            return true;
-        }
-        return false;
+        return config.getInt(playername + ".lives", 0) > 0;
     }
 
     public String getVote(Player player){
