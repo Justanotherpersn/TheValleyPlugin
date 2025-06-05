@@ -14,7 +14,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class VoteCommand implements CommandExecutor, TabCompleter {
-    private static final Logger log = LoggerFactory.getLogger(VoteCommand.class);
     private final TheValley plugin;
 
     public VoteCommand(TheValley plugin){
@@ -29,20 +28,26 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
         switch (command.getName().toLowerCase()) {
             case "vote":
 
+                if (args.length != 1) {
+                    sender.sendMessage("§cUsage: /vote <player>");
+                    return true;
+                }
+
                 OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
 
-
-                if (args.length != 1) {
-                    sender.sendMessage("§cUsage: /addlife <player> <# of lives>");
+                if (!plugin.getdataHandler().getVoteStatus()){
+                    sender.sendMessage("Voting is not enabled");
                     return true;
                 }
 
                 if (target == null) {
                     sender.sendMessage("Player not found.");
+                    return true;
                 }
 
                 if (!plugin.getdataHandler().checkEligible(player)) {
                     sender.sendMessage("You're not eligible to vote.");
+                    return true;
                 }
 
                 plugin.getdataHandler().addVote(player, target);
@@ -50,11 +55,26 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
                 return true;
 
             case "votelist":
-                sender.sendMessage("hey");
+                plugin.getdataHandler().listVotes(sender);
                 return true;
 
             case "myvote":
                 sender.sendMessage("Your Vote is: " + plugin.getdataHandler().getVote(player));
+                return true;
+
+            case "startvoting":
+                plugin.getdataHandler().voteControl(true);
+                sender.sendMessage("Voting Started");
+                return true;
+
+            case "stopvoting":
+                plugin.getdataHandler().voteControl(false);
+                sender.sendMessage("Voting Stopped");
+                return true;
+
+            case  "resetvoting":
+                plugin.getdataHandler().voteReset();
+                sender.sendMessage("Votes reset");
                 return true;
         }
         return true;
@@ -68,6 +88,7 @@ public class VoteCommand implements CommandExecutor, TabCompleter {
 
             return allPlayerNames.stream()
                     .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .filter(name -> !name.equals("server"))
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

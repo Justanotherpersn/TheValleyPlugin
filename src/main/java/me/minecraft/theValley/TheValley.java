@@ -12,6 +12,7 @@ public final class TheValley extends JavaPlugin {
         this.dataHandler = new DataHandler(this);
         this.nametagSetter = new NametagSetter(this);
 
+        dataHandler.serverVoteInit();
 
         VoteCommand voteCommand = new VoteCommand(this);
 
@@ -19,6 +20,9 @@ public final class TheValley extends JavaPlugin {
         getCommand("vote").setTabCompleter(new VoteCommand(this));
         getCommand("votelist").setExecutor(new VoteCommand(this));
         getCommand("myvote").setExecutor(new VoteCommand(this));
+        getCommand("startvoting").setExecutor(new VoteCommand(this));
+        getCommand("stopvoting").setExecutor(new VoteCommand(this));
+        getCommand("resetvoting").setExecutor(new VoteCommand(this));
 
 
         LifeCommands lifeCommands = new LifeCommands(this);

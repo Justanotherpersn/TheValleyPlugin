@@ -9,10 +9,7 @@ import org.bukkit.entity.Player;
 
 import org.bukkit.command.TabCompleter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -28,18 +25,18 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
 
         switch (command.getName().toLowerCase()){
             case "editlives":
-                Player target = Bukkit.getPlayer(args[0]);
+                OfflinePlayer target = Bukkit.getOfflinePlayer(args[0]);
 
                 if(!sender.hasPermission("thevalley.editlives")){
                     sender.sendMessage(("You do not have permission to use this command."));
                     return true;
                 }
                 if (args.length < 2) {
-                    sender.sendMessage("§cUsage: /editlife <player> <# of lives>");
+                    sender.sendMessage("§cUsage: /editlives <player> <# of lives>");
                     return true;
                 }
 
-                if(target == null || !target.isOnline()){
+                if(target == null){
                     sender.sendMessage("Player not found.");
                 }
 
@@ -52,7 +49,10 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
                 }
 
                 plugin.getdataHandler().addLife(target, lives);
-                plugin.getNametagSetter().setDeathColor(target.getPlayer());
+                if (target.isOnline()) {
+                    plugin.getNametagSetter().setDeathColor(target.getPlayer());
+                }
+                sender.sendMessage(lives + " lives to " + target.getName());
                 return true;
 
             case "removelife":
@@ -63,6 +63,7 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
                 Player player = (Player) sender;
                 plugin.getdataHandler().addLife(player, -1);
                 plugin.getNametagSetter().setDeathColor(player);
+                sender.sendMessage("Life removed");
                 return true;
 
         }
@@ -79,6 +80,7 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
                     .map(OfflinePlayer::getName)
                     .filter(Objects::nonNull)
                     .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
+                    .sorted()
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();

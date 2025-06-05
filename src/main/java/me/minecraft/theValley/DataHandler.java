@@ -1,6 +1,8 @@
 package me.minecraft.theValley;
 
+import org.apache.logging.log4j.util.StringBuilders;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -8,7 +10,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataHandler {
     public File file;
@@ -36,6 +39,14 @@ public class DataHandler {
     }
 
     //region Data Manager
+
+    public void serverVoteInit(){
+        String server = "server";
+        if(!config.contains(server)) {
+            config.set(server + ".voteStatus", false);
+            save();
+        }
+    }
 
     public void init(Player player) {
         String playerName = player.getName();
@@ -67,7 +78,7 @@ public class DataHandler {
 
     //region Life Handler
 
-    public void addLife(Player player, int targetLives) {
+    public void addLife(OfflinePlayer player, int targetLives) {
         String playerName = player.getName();
         int lives = config.getInt(playerName + ".lives", 0) + targetLives;
         int newlives = Math.max(0, Math.min(lives, 5));
@@ -83,9 +94,34 @@ public class DataHandler {
 
     //region Vote Handler
 
+    public void voteControl(boolean input){
+        config.set("server" + ".voteStatus", input);
+        save();
+    }
+
+    public void voteReset(){
+        Set<String> keys = config.getKeys(false);
+        for (String key : keys){
+            if (config.contains(key + ".votes")){
+                config.set(key + ".votes", 0);
+                config.set(key + ".votePointer", "");
+            }
+        }
+        save();
+    }
+
+    public boolean getVoteStatus(){
+        boolean status = config.getBoolean("server" + ".voteStatus");
+        return status;
+    }
+
     public void addVote(Player player, OfflinePlayer target){
         String playername = player.getName();
         String targetplayer = target.getName();
+
+        if(!getVoteStatus()){
+            return;
+        }
 
         if(Objects.requireNonNull(config.getString(playername + ".votePointer", "")).isEmpty()){
             int votes = config.getInt(targetplayer + ".votes", 0) + 1;
@@ -96,7 +132,12 @@ public class DataHandler {
         }
 
         String oldVoteName = config.getString(playername + ".votePointer");
-        int oldVoteNum = config.getInt(oldVoteName + ".votes") - 1;
+
+        if (targetplayer.equals(oldVoteName)) {
+            return; // already voted for this player, do nothing
+        }
+
+        int oldVoteNum = Math.max(0 ,config.getInt(oldVoteName + ".votes") - 1);
         int newVoteNum = config.getInt(targetplayer + ".votes", 0) + 1;
 
         config.set(oldVoteName + ".votes", oldVoteNum);
@@ -107,10 +148,7 @@ public class DataHandler {
 
     public boolean checkEligible(Player player){
         String playername = player.getName();
-        if(config.getInt(playername + ".lives") > 0){
-            return true;
-        }
-        return false;
+        return config.getInt(playername + ".lives", 0) > 0;
     }
 
     public String getVote(Player player){
@@ -118,7 +156,35 @@ public class DataHandler {
         return myvote;
     }
 
+    public void listVotes(CommandSender sender) {
+        Map<String, Integer> playerVotes = new HashMap<>();
+        Set<String> allPlayerNames = getConfig().getKeys(false);
 
+        for (String name : allPlayerNames) {
+            int votes = getConfig().getInt(name + ".votes", 0);
+            if (votes > 0) {
+                playerVotes.put(name, votes);
+            }
+        }
+
+        LinkedHashMap<String, Integer> sortedVotes = playerVotes.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        sender.sendMessage(" |------------------| ");
+        for (Map.Entry<String, Integer> entry : sortedVotes.entrySet()) {
+            sender.sendMessage(" - " + entry.getKey() + ": " + entry.getValue());
+        }
+        sender.sendMessage(" |------------------| ");
+
+
+    }
     //endregion
 
 
