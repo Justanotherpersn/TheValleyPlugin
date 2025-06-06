@@ -31,7 +31,7 @@ public class NametagSetter {
 
             if(team == null){
                 team = scoreboard.registerNewTeam(teamNames[i]);
-                team.setColor(ChatColor.valueOf(teamcolors[i].toString()));
+                team.setColor(teamcolors[i]);
                 team.setPrefix(ChatColor.WHITE + teamPrefix[i]);
             }
         }
