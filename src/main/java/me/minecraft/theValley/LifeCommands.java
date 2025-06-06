@@ -66,6 +66,26 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
                 sender.sendMessage("Life removed");
                 return true;
 
+            case "togglegrace":
+                if(!sender.hasPermission("thevalley.editlives")){
+                    sender.sendMessage(("You do not have permission to use this command."));
+                    return true;
+                }
+                if (args.length != 1) {
+                    sender.sendMessage("§cUsage: /togglegrace <true or false>");
+                    return true;
+                }
+
+                boolean grace;
+                try{
+                    grace = Boolean.parseBoolean(args[0]);
+                }catch (NumberFormatException e) {
+                    sender.sendMessage("Must be true or false");
+                    return true;
+                }
+                plugin.getdataHandler().graceControl(grace);
+                sender.sendMessage("Grace set to " + grace);
+                return true;
         }
         return true;
 
@@ -75,15 +95,28 @@ public class LifeCommands implements CommandExecutor, TabCompleter{
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        if (args.length == 1) {
-            return Arrays.stream(Bukkit.getOfflinePlayers())
-                    .map(OfflinePlayer::getName)
-                    .filter(Objects::nonNull)
-                    .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
-                    .sorted()
-                    .collect(Collectors.toList());
+        switch (command.getName().toLowerCase()) {
+            case "editlives":
+                if (args.length == 1) {
+                    return Arrays.stream(Bukkit.getOfflinePlayers())
+                            .map(OfflinePlayer::getName)
+                            .filter(Objects::nonNull)
+                            .filter(name -> name.toLowerCase().startsWith(args[0].toLowerCase()))
+                            .sorted()
+                            .collect(Collectors.toList());
+                }
+                break;
+
+            case "togglegrace":
+                if (args.length == 1) {
+                    return Arrays.asList("true", "false").stream()
+                            .filter(value -> value.startsWith(args[0].toLowerCase()))
+                            .collect(Collectors.toList());
+                }
+                break;
         }
         return Collections.emptyList();
-    }
 
+
+    }
 }

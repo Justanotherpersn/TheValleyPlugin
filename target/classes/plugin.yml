@@ -16,6 +16,12 @@ commands:
     permission: thevalley.votePublic
     permission-message: You don't have permission to use this command
 
+  togglegrace:
+    description: toggles life penalty for kills
+    usage: /togglegrace
+    permission: thevalley.votePrivate
+    permission-message: You don't have permission to use this command
+
   vote:
     description: casts a vote for valley mayor
     usage: /vote

@@ -40,10 +40,11 @@ public class DataHandler {
 
     //region Data Manager
 
-    public void serverVoteInit(){
+    public void serverInit(){
         String server = "server";
         if(!config.contains(server)) {
             config.set(server + ".voteStatus", false);
+            config.set(server + ".graceStatus", true);
             save();
         }
     }
@@ -78,6 +79,15 @@ public class DataHandler {
 
     //region Life Handler
 
+    public void graceControl(boolean input){
+        config.set("server" + ".graceStatus", input);
+        save();
+    }
+
+    public boolean getGraceStatus(){
+        return config.getBoolean("server" + ".graceStatus");
+    }
+
     public void addLife(OfflinePlayer player, int targetLives) {
         String playerName = player.getName();
         int lives = config.getInt(playerName + ".lives", 0) + targetLives;
@@ -111,8 +121,7 @@ public class DataHandler {
     }
 
     public boolean getVoteStatus(){
-        boolean status = config.getBoolean("server" + ".voteStatus");
-        return status;
+        return config.getBoolean("server" + ".voteStatus");
     }
 
     public void addVote(Player player, OfflinePlayer target){
@@ -150,6 +159,8 @@ public class DataHandler {
         String playername = player.getName();
         return config.getInt(playername + ".lives", 0) > 0;
     }
+
+
 
     public String getVote(Player player){
         String myvote = config.getString(player.getName() + ".votePointer", "");

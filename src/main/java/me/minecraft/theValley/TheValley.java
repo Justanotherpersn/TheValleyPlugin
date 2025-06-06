@@ -12,7 +12,10 @@ public final class TheValley extends JavaPlugin {
         this.dataHandler = new DataHandler(this);
         this.nametagSetter = new NametagSetter(this);
 
-        dataHandler.serverVoteInit();
+        dataHandler.serverInit();
+
+        getServer().getPluginManager().registerEvents(new DeathListener(this), this);
+        getServer().getPluginManager().registerEvents(new JoinListener(this), this);
 
         VoteCommand voteCommand = new VoteCommand(this);
         LifeCommands lifeCommands = new LifeCommands(this);
@@ -31,7 +34,8 @@ public final class TheValley extends JavaPlugin {
         getCommand("removelife").setExecutor(lifeCommands);
         getCommand("editlives").setTabCompleter(lifeCommands);
         getCommand("removelife").setTabCompleter(lifeCommands);
-
+        getCommand("togglegrace").setExecutor(lifeCommands);
+        getCommand("togglegrace").setTabCompleter(lifeCommands);
         nametagSetter.createColorTeams();
     }
 
