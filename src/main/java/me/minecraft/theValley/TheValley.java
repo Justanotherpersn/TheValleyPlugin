@@ -15,28 +15,22 @@ public final class TheValley extends JavaPlugin {
         dataHandler.serverVoteInit();
 
         VoteCommand voteCommand = new VoteCommand(this);
-
-        getCommand("vote").setExecutor(new VoteCommand(this));
-        getCommand("vote").setTabCompleter(new VoteCommand(this));
-        getCommand("votelist").setExecutor(new VoteCommand(this));
-        getCommand("myvote").setExecutor(new VoteCommand(this));
-        getCommand("startvoting").setExecutor(new VoteCommand(this));
-        getCommand("stopvoting").setExecutor(new VoteCommand(this));
-        getCommand("resetvoting").setExecutor(new VoteCommand(this));
-
-
         LifeCommands lifeCommands = new LifeCommands(this);
 
-        getCommand("editlives").setExecutor(new LifeCommands(this));
-        getCommand("removelife").setExecutor((new LifeCommands(this)));
-        getCommand("editlives").setTabCompleter(new LifeCommands(this));
-        getCommand("removelife").setTabCompleter((new LifeCommands(this)));
+        // Register Vote Commands
+        getCommand("vote").setExecutor(voteCommand);
+        getCommand("vote").setTabCompleter(voteCommand);
+        getCommand("votelist").setExecutor(voteCommand);
+        getCommand("myvote").setExecutor(voteCommand);
+        getCommand("startvoting").setExecutor(voteCommand);
+        getCommand("stopvoting").setExecutor(voteCommand);
+        getCommand("resetvoting").setExecutor(voteCommand);
 
-
-       getServer().getPluginManager().registerEvents(new DeathListener(this), this);
-       getServer().getPluginManager().registerEvents(new JoinListener(this), this);
-       nametagSetter.createColorTeams();
-
+        // Register Life Commands
+        getCommand("editlives").setExecutor(lifeCommands);
+        getCommand("removelife").setExecutor(lifeCommands);
+        getCommand("editlives").setTabCompleter(lifeCommands);
+        getCommand("removelife").setTabCompleter(lifeCommands);
     }
 
     public DataHandler getdataHandler() {
