@@ -31,6 +31,8 @@ public final class TheValley extends JavaPlugin {
         getCommand("removelife").setExecutor(lifeCommands);
         getCommand("editlives").setTabCompleter(lifeCommands);
         getCommand("removelife").setTabCompleter(lifeCommands);
+
+        nametagSetter.createColorTeams();
     }
 
     public DataHandler getdataHandler() {
